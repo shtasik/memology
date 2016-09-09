@@ -6,7 +6,7 @@ Created on Tue Sep  6 17:40:12 2016
 """
 
 ###############################################################
-#### Парсим мемасики, мемчики, мемулики, just for lulz <3  ####
+####       Meme parsing just for lulz and science  <3      ####
 ###############################################################
 
 
@@ -18,6 +18,9 @@ from dateutil import parser
 import pandas as pd
 import numpy as np
 from urllib.request import Request, urlopen
+import getpass
+username = getpass.getuser()
+
 
 def html_stripper(text):
     return re.sub('<[^<]+?>', '', str(text))
@@ -125,3 +128,5 @@ def getAllFromPage(meme_urls):
 for page in range(1, number_of_pages):
     getAllFromPage(getMemeUrls(page))
     
+
+FINAL.to_csv('/Users/{}/Desktop/{}.csv'.format(username, 'Memes.csv'))
