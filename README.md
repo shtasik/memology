@@ -22,4 +22,4 @@ Cleaning, preprocessing, bag-o-wording, Word2vecing, modelling and, of course, h
 To be continued...
 
 
-[!image](https://lh3.googleusercontent.com/2lV4Nm6oa9_hY2t-9tBbo3RAuEzcraalogZT0oPDmBqic4tWXliMP_PPWMfG4nnr0vxF=h1264)
+(!image)[https://lh3.googleusercontent.com/2lV4Nm6oa9_hY2t-9tBbo3RAuEzcraalogZT0oPDmBqic4tWXliMP_PPWMfG4nnr0vxF=h1264]
