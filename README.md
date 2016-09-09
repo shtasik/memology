@@ -1,4 +1,4 @@
-# memology
+# Memology
 **Memes - why so popular?**
 
 
