@@ -1,5 +1,5 @@
 # memology
-Memes - why so popular?
+**Memes - why so popular?**
 
 
 This project is dedicated to the greatest achievement of humanity - Memes. Finding out the popularity of a meme based on its description and some other data from [KnowYourMemes.com](KnowYourMemes.com) sounds like a great idea for me. Wow.
@@ -17,6 +17,6 @@ Parser outputs a csv file with the following fields:
 - *spread* - usually an empty fiels, sometimes it says what is the area of spread of the meme
 
 ### What is next?
-Cleanind, preprocessing, bag-o-wording, Word2vecing, modelling and, of course, having tons of fun!
+Cleaning, preprocessing, bag-o-wording, Word2vecing, modelling and, of course, having tons of fun!
 
 To be continued...
