@@ -4,7 +4,7 @@
 
 This project is dedicated to the greatest achievement of humanity - Memes. Finding out the popularity of a meme based on its description and some other data from [KnowYourMemes.com](KnowYourMemes.com) sounds like a great idea for me. Wow.
 
-Parser outputs a csv file with the following fields:
+Parser outputs (*should output*) a csv file with the following fields:
 - *name* - name of the glorious meme
 - *added* - date the masterpiece was added to the site
 - *views* - how many mere mortals have witnessed the meme
