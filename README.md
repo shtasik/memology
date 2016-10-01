@@ -16,6 +16,10 @@ Parser outputs (*should output*) a csv file with the following fields:
 - *origin* - after all we all came from dust. But not the Memes
 - *spread* - usually an empty fiels, sometimes it says what is the area of spread of the meme
 
+
+### Totally Awesome interface
+![](https://habrastorage.org/files/d64/47e/ac9/d6447eac989f4453839529414b0bc20e.png)
+
 ### What is next?
 Cleaning, preprocessing, bag-o-wording, Word2vecing, modelling and, of course, having tons of fun!
 
