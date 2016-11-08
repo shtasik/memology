@@ -12,28 +12,43 @@ Created on Tue Sep  6 17:40:12 2016
 
 import re
 from bs4 import BeautifulSoup
-from tkinter import *
 import time
-from dateutil import parser
 import pandas as pd
 import numpy as np
 from urllib.request import Request, urlopen
 import getpass
-
 import sys
 sys.path.append('/Users/dmitrys/anaconda2/lib/python2.7/site-packages')
 username = getpass.getuser()
 
+#### Send me a letter
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+#from email.mime.base import MIMEBase
+#from email import encoders
+import requests
+import sys
+
+
+#### GOING TO TOR
+import socks
+import socket
+socks.set_default_proxy(socks.SOCKS5, "localhost", 9150)
+socket.socket = socks.socksocket
+#print(urlopen('http://icanhazip.com').read())
+
 
 from fake_useragent import UserAgent
-ua = UserAgent()
-ua.chrome
+
+def generateUserAgent():
+    return UserAgent().chrome
 
 def html_stripper(text):
     return re.sub('<[^<]+?>', '', str(text))
 
 
-number_of_pages = 362
+number_of_pages = 369
 page = 1
 main_url = 'http://knowyourmeme.com/'
 columns = ['name', 'added', 'views', 'comments', 'status', 'year', 'tags', 'about', 'origin', 'spread']
@@ -41,34 +56,20 @@ FINAL = pd.DataFrame(columns=columns)
 START = time.time()
 
 def getMemeUrls(page):
-    req = Request('http://knowyourmeme.com/memes/all/page/{}'.format(page), headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36'})
+    req = Request('http://knowyourmeme.com/memes/all/page/{}'.format(page), headers={'User-Agent': generateUserAgent()})
     webpage = urlopen(req).read()
     soup = BeautifulSoup(webpage, "lxml")
     meme_urls = soup.findAll('a', attrs={'class':'photo'})
     print('Getting all memes from page {}'.format(page))
     return meme_urls
 
-#meme_urls_7  = getMemeUrls(7)
-#meme_urls_6 = getMemeUrls(6)
-
-
-#list1 = getAllFromPage(meme_urls_6)
-#list2 = getAllFromPage(meme_urls_7)
-#list3=list(set(list1)-set(list2))  
-#print(list3) 
-
-#def getAllFromPage(meme_urls):
-#    memes= []
-#    for meme in meme_urls:
-#        memes.append(re.split('href="|" target="|"> <img|"', str(meme))[3])
-         #print(re.split('href="|" target="|"> <img|"', str(meme))[3])
-    #return memes
 
 
 def getAllFromPage(meme_urls):
     global FINAL
     count = 0
     start = time.time()
+    current_shape = FINAL.shape
     for meme in meme_urls:
         count += 1
 
@@ -77,7 +78,7 @@ def getAllFromPage(meme_urls):
         #time.sleep(1)
         try:
             meme_url = re.split('href="|" target="|"> <img|"', str(meme))[3]
-            meme_page = Request(main_url+meme_url)
+            meme_page = Request(main_url+meme_url, headers={'User-Agent': generateUserAgent()})
             meme_page = urlopen(meme_page).read()
             meme_page = BeautifulSoup(meme_page, 'lxml')
         except:
@@ -153,9 +154,55 @@ def getAllFromPage(meme_urls):
         sys.stdout.write("Meme number:   {}\r".format(count))
         sys.stdout.flush()
         
-
+        
 
         FINAL = FINAL.append(to_append, ignore_index=True)
+        
+    #### Now if we've been banned, send a letter and wait!
+    if FINAL.shape == current_shape:
+        print("Dayum son, something's wrong!")
+        raise ValueError
+        #unban = input('Gonna send`em? (y/n)')
+        unban = 'n'
+        if unban=="y":
+                   
+            IP = requests.request('GET', 'http://myip.dnsomatic.com').text
+            
+            fromaddr = "MYMAIL"
+            msg = MIMEMultipart()
+             
+            msg['From'] = fromaddr
+            #bans@knowyourmeme.com
+            recipients = ['bans@knowyourmeme.com']
+            print('Now sending emails to {}'.format(", ".join(recipients)))
+            msg['To'] = ", ".join(recipients)
+            msg['Subject'] = "{} banned".format(IP)
+             
+        
+            # Fooling around with the message <3
+            import random
+            foo = ['Hi, please unban {}!', 
+                   'Sorry, working on a parsing project, please unban {}!', 
+                   'Sorry again, could you unban {}?', 
+                   'Hi, working on a parse project, please unban {}', 
+                   'Please, unban {}', 
+                   'Hi, could you, please, unban {} again?']
+            body = random.choice(foo).format(IP)
+            msg.attach(MIMEText(body, 'plain'))
+                     
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(fromaddr, "PASSWORD")
+            text = msg.as_string()
+            server.sendmail(fromaddr, recipients, text)
+            server.quit()
+            print("Sent, now waiting for 30 mins")
+            time.sleep(1800)
+
+        else:
+            print("End of parsing")
+            raise ValueError
+        
     print('Total memes got {}'.format(count))
     print('elapsed time: {} sec'.format(round(time.time()-start, 1)))
     print('========')
@@ -163,12 +210,25 @@ def getAllFromPage(meme_urls):
 
 #for page in range(1, number_of_pages):
 #    print(re.split('href="|" target="|"> <img|"', str(getMemeUrls(page)[10]))[3])
-
-for page in range(1, number_of_pages):
-    getAllFromPage(getMemeUrls(page))
-    
-
-FINAL.to_csv('/Users/{}/Desktop/DataProjects/KnowYourMemes/{}.csv'.format(username, 'Memes.csv'))
-
+START_PAGE = int(input("enter the start page"))
+for page in range(START_PAGE, number_of_pages):
+    try:
+        #IP = urlopen(Request('http://icanhazip.com', headers={'User-Agent': generateUserAgent()})).read()
+        #print("Current IP is {}".format(IP))
+        getAllFromPage(getMemeUrls(page))
+        FINAL.to_csv('/Users/{}/Desktop/DataProjects/KnowYourMemes/{}'.format(username, 'Memes_final_second.csv'))
+        time.sleep(15)
+    except ValueError:
+        try:
+            print("Let's try again")
+            print("Current page is {}".format(page))
+            #print("Current IP is {}".format(IP))
+            time.sleep(600)
+            getAllFromPage(getMemeUrls(page))
+        except ValueError:
+            FINAL.to_csv('/Users/{}/Desktop/DataProjects/KnowYourMemes/{}'.format(username, 'Memes_{}.csv'.format(page)))
+            break
+        
+FINAL.to_csv('/Users/{}/Desktop/DataProjects/KnowYourMemes/{}'.format(username, 'Memes.csv'))
 print('Finished!')
 print('Total time: {}'.format((time.time() - START)/60))
