@@ -4,6 +4,8 @@
 
 This project is dedicated to the greatest achievement of humanity - Memes. Finding out the popularity of a meme based on its description and some other data from [KnowYourMeme.com](http://KnowYourMeme.com) sounds like a great idea for me. 
 
+My workshop talk at DataFest4 about parsing websites (including KnowYourMeme) can be found [here](https://it.mail.ru/video/933/).
+
 Parser outputs (*should output*) a csv file with the following fields:
 - *name* - name of the meme
 - *added* - date when it was added to the site
